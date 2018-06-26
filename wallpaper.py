@@ -13,7 +13,8 @@ import shutil
 # 这些参数可以取搜狗查看  http://pic.sogou.com/pics/recommend?category=%B1%DA%D6%BD&from=home#%E5%85%A8%E9%83%A8%2610
 width = 1440
 height = 900
-tag = '优质'
+category = '美女'
+tag = '诱惑'
 
 like_dir = os.path.expanduser('~') + '/wallpaper'
 ################################################################################
@@ -26,21 +27,21 @@ parser.add_option("-l", "--like", dest="like", default=False,
 (options, args) = parser.parse_args()
 
 
-def get_sogou_wallpaper(tag, width, height):
-    url = 'http://pic.sogou.com/pics/channel/getAllRecomPicByTag.jsp?'
-
-    url += 'category=%s&' % urllib2.quote('壁纸')
-    url += 'tag=%s&' % urllib2.quote(tag)
-    url += 'start=%s&' % random.randint(0, 100)
-    url += 'len=%s&' % random.randint(1, 666)
-    url += 'width=%s&' % width
-    url += 'height=%s&' % height
-
+def get_sogou_wallpaper(category, tag, width, height):
     img_url = ''
     file_name = ''
 
     repeat = 3
     while repeat > 0:
+        url = 'http://pic.sogou.com/pics/channel/getAllRecomPicByTag.jsp?'
+
+        url += 'category=%s&' % urllib2.quote(category)
+        url += 'tag=%s&' % urllib2.quote(tag)
+        url += 'start=%s&' % random.randint(0, 100)
+        url += 'len=%s&' % random.randint(1, 666)
+        url += 'width=%s&' % width
+        url += 'height=%s&' % height
+
         response = urllib2.urlopen(url)
         res = json.load(response, 'gbk')
         if 'all_items' in res:
@@ -105,6 +106,6 @@ if options.like:
     like_cur_paper(tmp_dir, like_dir)
     pass
 else:
-    img_url, file_name = get_sogou_wallpaper(tag, width, height)
+    img_url, file_name = get_sogou_wallpaper(category, tag, width, height)
     save_paper_file(img_url, file_name, tmp_dir)
     set_paper(tmp_dir + '' + file_name)
