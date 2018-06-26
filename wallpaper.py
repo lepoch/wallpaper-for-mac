@@ -44,13 +44,20 @@ def get_sogou_wallpaper(category, tag, width, height):
 
         response = urllib2.urlopen(url)
         res = json.load(response, 'gbk')
+
+        items = []
         if 'all_items' in res:
-            l = len(res['all_items'])
-            if l >= 0:
-                item = res['all_items'][random.randint(0, l - 1)]
-                img_url = item['pic_url']
-                file_name = bytes(item['id']) + '.jpg'
-                break
+            for item in res['all_items']:
+                # 筛选
+                if (height >= width and item['height'] >= item['width']) or (height <= width and item['height'] <= item['width']):
+                    items.append(item)
+
+        if len(items) > 0:
+            item = items[random.randint(0, len(items) - 1)]
+            img_url = item['pic_url']
+            file_name = bytes(item['id']) + '.jpg'
+            break
+
         repeat -= 1
 
     return img_url, file_name
