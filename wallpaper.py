@@ -13,8 +13,8 @@ import shutil
 # 这些参数可以取搜狗查看  http://pic.sogou.com/pics/recommend?category=%B1%DA%D6%BD&from=home#%E5%85%A8%E9%83%A8%2610
 width = 1440
 height = 900
-category = '美女'
-tag = '诱惑'
+category = '壁纸'
+tag = '美女'
 
 like_dir = os.path.expanduser('~') + '/wallpaper'
 ################################################################################
@@ -31,34 +31,39 @@ def get_sogou_wallpaper(category, tag, width, height):
     img_url = ''
     file_name = ''
 
-    repeat = 3
+    repeat = 10
     while repeat > 0:
-        url = 'http://pic.sogou.com/pics/channel/getAllRecomPicByTag.jsp?'
+        try:
+            url = 'http://pic.sogou.com/pics/channel/getAllRecomPicByTag.jsp?'
 
-        url += 'category=%s&' % urllib2.quote(category)
-        url += 'tag=%s&' % urllib2.quote(tag)
-        url += 'start=%s&' % random.randint(0, 100)
-        url += 'len=%s&' % random.randint(1, 666)
-        url += 'width=%s&' % width
-        url += 'height=%s&' % height
+            url += 'category=%s&' % urllib2.quote(category)
+            url += 'tag=%s&' % urllib2.quote(tag)
+            url += 'start=%s&' % random.randint(0, 100)
+            url += 'len=%s&' % random.randint(1, 666)
+            url += 'width=%s&' % width
+            url += 'height=%s&' % height
 
-        response = urllib2.urlopen(url)
-        res = json.load(response, 'gbk')
+            response = urllib2.urlopen(url)
+            res = json.load(response, 'gbk')
 
-        items = []
-        if 'all_items' in res:
-            for item in res['all_items']:
-                # 筛选
-                if (height >= width and item['height'] >= item['width']) or (height <= width and item['height'] <= item['width']):
-                    items.append(item)
+            items = []
+            if 'all_items' in res:
+                for item in res['all_items']:
+                    # 筛选
+                    if (height >= width and item['height'] >= item['width']) or (
+                            height <= width and item['height'] <= item['width']):
+                        items.append(item)
 
-        if len(items) > 0:
-            item = items[random.randint(0, len(items) - 1)]
-            img_url = item['pic_url']
-            file_name = bytes(item['id']) + '.jpg'
-            break
+            if len(items) > 0:
+                item = items[random.randint(0, len(items) - 1)]
+                img_url = item['pic_url']
+                file_name = bytes(item['id']) + '.jpg'
+                break
 
-        repeat -= 1
+            repeat -= 1
+
+        except Exception as e:
+            print(e)
 
     return img_url, file_name
 
