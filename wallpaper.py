@@ -63,7 +63,7 @@ def get_sogou_wallpaper(category, tag, width, height):
             repeat -= 1
 
         except Exception as e:
-            print(e)
+            pass
 
     return img_url, file_name
 
@@ -81,7 +81,7 @@ def save_img(img_url, file_name, file_path):
         f.close()
 
     except Exception as e:
-        print(e)
+        pass
 
 
 def save_paper_file(img_url, file_name, tmp_dir):
@@ -94,11 +94,8 @@ def save_paper_file(img_url, file_name, tmp_dir):
 
 
 def set_paper(picture):
-    print(picture)
     output = os.popen(
         'osascript -e \'tell application "Finder" to set desktop picture to POSIX file "' + picture + '"\'')
-
-    print output.read()
 
 
 def like_cur_paper(tmp_dir, like_dir):
