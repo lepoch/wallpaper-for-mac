@@ -49,7 +49,6 @@ def get_so_wallpaper(ch, t1, width, height):
             response = urllib2.urlopen(url)
             res = json.load(response)
 
-            print(start)
             if 'list' in res:
                 items = res['list']
                 if len(items) > 0:
