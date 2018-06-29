@@ -1,13 +1,13 @@
 # sogou-wallpaper-for-mac
-mac，从搜狗获取图片并设置成壁纸
+mac，从so.com获取图片并设置成壁纸
 
 ## 配置
 ```Python
-# 这些参数可以取搜狗查看  http://pic.sogou.com/pics/recommend?category=%B1%DA%D6%BD&from=home#%E5%85%A8%E9%83%A8%2610
+# 这些参数可以去so.com查看，如 http://image.so.com/z?ch=wallpaper&t1=93&listtype=hot&width=1440&height=900
 width = 1440
 height = 900
-tegory = '壁纸'
-tag = '美女'
+ch = 'wallpaper'
+t1 = '93'
 
 like_dir = os.path.expanduser('~') + '/wallpaper'
 ################################################################################

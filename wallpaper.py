@@ -10,11 +10,11 @@ import shutil
 
 ############################ 配置区域 #########################################
 
-# 这些参数可以取搜狗查看  http://pic.sogou.com/pics/recommend?category=%B1%DA%D6%BD&from=home#%E5%85%A8%E9%83%A8%2610
+# 这些参数可以去so.com查看，如 http://image.so.com/z?ch=wallpaper&t1=93&listtype=hot&width=1440&height=900
 width = 1440
 height = 900
-category = '壁纸'
-tag = '美女'
+ch = 'wallpaper'
+t1 = '93'
 
 like_dir = os.path.expanduser('~') + '/wallpaper'
 ################################################################################
@@ -27,42 +27,37 @@ parser.add_option("-l", "--like", dest="like", default=False,
 (options, args) = parser.parse_args()
 
 
-def get_sogou_wallpaper(category, tag, width, height):
+def get_so_wallpaper(ch, t1, width, height):
     img_url = ''
     file_name = ''
 
     repeat = 10
     while repeat > 0:
         try:
-            url = 'http://pic.sogou.com/pics/channel/getAllRecomPicByTag.jsp?'
+            url = 'http://image.so.com/zj?'
 
-            page_size = 15
-            start = random.randint(0, 30) * page_size
+            page_size = 30
+            start = random.randint(0, 100) * page_size
 
-            url += 'category=%s&' % urllib2.quote(category)
-            url += 'tag=%s&' % urllib2.quote(tag)
-            url += 'start=%s&' % start
-            url += 'len=%s&' % page_size
+            url += 'ch=%s&' % urllib2.quote(ch)
+            url += 't1=%s&' % urllib2.quote(t1)
+            url += 'sn=%s&' % start
             url += 'width=%s&' % width
             url += 'height=%s&' % height
+            url += 'listtype=%s&' % 'hot'
 
             response = urllib2.urlopen(url)
-            res = json.load(response, 'gbk')
+            res = json.load(response)
 
-            items = []
-            if 'all_items' in res:
-                for item in res['all_items']:
-                    # 筛选
-                    if (height >= width and item['height'] >= item['width']) or (
-                            height <= width and item['height'] <= item['width']):
-                        items.append(item)
-
-            if len(items) > 0:
-                r = random.randint(0, len(items) - 1)
-                item = items[r]
-                img_url = item['pic_url']
-                file_name = bytes(item['id']) + '.jpg'
-                break
+            print(start)
+            if 'list' in res:
+                items = res['list']
+                if len(items) > 0:
+                    r = random.randint(0, len(items) - 1)
+                    item = items[r]
+                    img_url = item['qhimg_url']
+                    file_name = bytes(item['id']) + '.jpg'
+                    break
 
             repeat -= 1
 
@@ -119,6 +114,7 @@ if options.like:
     like_cur_paper(tmp_dir, like_dir)
     pass
 else:
-    img_url, file_name = get_sogou_wallpaper(category, tag, width, height)
-    save_paper_file(img_url, file_name, tmp_dir)
-    set_paper(tmp_dir + '' + file_name)
+    img_url, file_name = get_so_wallpaper(ch, t1, width, height)
+    if img_url and file_name:
+        save_paper_file(img_url, file_name, tmp_dir)
+        set_paper(tmp_dir + '' + file_name)
