@@ -36,10 +36,13 @@ def get_sogou_wallpaper(category, tag, width, height):
         try:
             url = 'http://pic.sogou.com/pics/channel/getAllRecomPicByTag.jsp?'
 
+            page_size = 15
+            start = random.randint(0, 30) * page_size
+
             url += 'category=%s&' % urllib2.quote(category)
             url += 'tag=%s&' % urllib2.quote(tag)
-            url += 'start=%s&' % random.randint(0, 100)
-            url += 'len=%s&' % random.randint(1, 666)
+            url += 'start=%s&' % start
+            url += 'len=%s&' % page_size
             url += 'width=%s&' % width
             url += 'height=%s&' % height
 
@@ -55,7 +58,8 @@ def get_sogou_wallpaper(category, tag, width, height):
                         items.append(item)
 
             if len(items) > 0:
-                item = items[random.randint(0, len(items) - 1)]
+                r = random.randint(0, len(items) - 1)
+                item = items[r]
                 img_url = item['pic_url']
                 file_name = bytes(item['id']) + '.jpg'
                 break
