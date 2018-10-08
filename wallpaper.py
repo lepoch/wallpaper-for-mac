@@ -10,11 +10,11 @@ import shutil
 
 ############################ 配置区域 #########################################
 
-# 这些参数可以去so.com查看，如 http://image.so.com/z?ch=wallpaper&t1=93&listtype=hot&width=1440&height=900
+# 这些参数可以去so.com查看，如 http://image.so.com/z?ch=wallpaper&t1=156&listtype=hot&width=1440&height=900
 width = 1440
 height = 900
 ch = 'wallpaper'
-t1 = '93'
+t1 = '156'
 
 like_dir = os.path.expanduser('~') + '/wallpaper'
 ################################################################################
@@ -58,9 +58,9 @@ def get_so_wallpaper(ch, t1, width, height):
                     file_name = bytes(item['id']) + '.jpg'
                     break
 
-            repeat -= 1
-
         except Exception as e:
+            repeat -= 1
+            print url, e
             pass
 
     return img_url, file_name

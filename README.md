@@ -29,5 +29,10 @@ python wallpaper.py -l like # 把当前图片复制到 like_dir
 ![hotKeys](https://github.com/lepoch/wallpaper-for-mac/raw/master/img/2.png)
 
 
+## 问题
+### 没效果
+1. 取消 桌面与屏幕保护程序 -> 更改图片
+2. 用浏览器打开 http://image.so.com/z?ch=wallpaper
+
 ## 参考
 [https://github.com/KailinLi/Bing-WallPaper-for-Mac](https://github.com/KailinLi/Bing-WallPaper-for-Mac)
