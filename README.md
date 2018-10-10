@@ -1,17 +1,13 @@
 # wallpaper-for-mac
-mac，从so.com获取图片并设置成壁纸
+mac，从百度获取图片并设置成壁纸
 
 ## 配置
 ```Python
-# 这些参数可以去so.com查看，如 http://image.so.com/z?ch=wallpaper&t1=93&listtype=hot&width=1440&height=900
-width = 1440
-height = 900
-ch = 'wallpaper'
-t1 = '93'
+config_width = 1440
+config_height = 900
+config_word = '壁纸 美女 模特'
 
-# 默认收藏在 用户家目录的 wallpaper 
-like_dir = os.path.expanduser('~') + '/wallpaper'   
-################################################################################
+config_like_dir = os.path.expanduser('~') + '/wallpaper' 
 ```
 
 ## 使用
@@ -34,5 +30,14 @@ python wallpaper.py -l like # 把当前图片复制到 like_dir
 1. 取消 桌面与屏幕保护程序 -> 更改图片
 2. 用浏览器打开 http://image.so.com/z?ch=wallpaper
 
+
 ## 参考
 [https://github.com/KailinLi/Bing-WallPaper-for-Mac](https://github.com/KailinLi/Bing-WallPaper-for-Mac)
+
+
+
+https://image.baidu.com/search/detail?tn=baiduimagedetail&ipn=d&word=%E5%A3%81%E7%BA%B8%20%E4%B8%8D%E5%90%8C%E9%A3%8E%E6%A0%BC%20%E5%8F%AF%E7%88%B1&os=3139768851,2123875696&width=1440&height=900
+
+https://image.baidu.com/search/detail?ct=503316480&z=0&ipn=d&word=%E5%A3%81%E7%BA%B8%20%E4%B8%8D%E5%90%8C%E9%A3%8E%E6%A0%BC%20%E5%8F%AF%E7%88%B1&step_word=&hs=0&pn=1&spn=0&di=104635664540&pi=0&rn=1&tn=baiduimagedetail&is=0%2C0&istype=2&ie=utf-8&oe=utf-8&in=&cl=&lm=-1&st=-1&cs=239729543%2C2730030954&os=3139768851%2C2123875696&simid=3231448673%2C140033455&adpicid=0&lpn=0&ln=1110&fr=&fmq=1526269427171_R&fm=&ic=0&s=undefined&se=&sme=&tab=0&width=1440&height=900&face=undefined&ist=&jit=&cg=&bdtype=0&oriquery=&objurl=http%3A%2F%2Fimg.pconline.com.cn%2Fimages%2Fupload%2Fupc%2Ftx%2Fwallpaper%2F1301%2F22%2Fc1%2F17619771_1358836511629.jpg&fromurl=ippr_z2C%24qAzdH3FAzdH3Ftpkkf_z%26e3Brv5gstgj_z%26e3Bv54_z%26e3BvgAzdH3Fcamlamld_z%26e3Bip4s&gsm=78&rpstart=0&rpnum=0&islist=&querylist=
+
+https://image.baidu.com/search/detail?ct=503316480&z=0&ipn=d&word=%E5%A3%81%E7%BA%B8%20%E4%B8%8D%E5%90%8C%E9%A3%8E%E6%A0%BC%20%E5%8F%AF%E7%88%B1&step_word=&hs=0&pn=42&spn=0&di=176168206721&pi=0&rn=1&tn=baiduimagedetail&is=0%2C0&istype=2&ie=utf-8&oe=utf-8&in=&cl=&lm=-1&st=-1&cs=1019347495%2C2051026871&os=2196539922%2C3097340835&simid=0%2C0&adpicid=0&lpn=0&ln=1110&fr=&fmq=1526269427171_R&fm=&ic=0&s=undefined&se=&sme=&tab=0&width=1440&height=900&face=undefined&ist=&jit=&cg=&bdtype=0&oriquery=&objurl=http%3A%2F%2Fdik.img.lgdsy.com%2Fpic%2F18%2F12371%2F5dda6a833987ca21_1440x900.png&fromurl=ippr_z2C%24qAzdH3FAzdH3Fooo_z%26e3B157thwg_z%26e3Bv54AzdH3FfpysjAzdH3Fs545AzdH3F8dn08_z%26e3Bip4s&gsm=1e&rpstart=0&rpnum=0&islist=&querylist=
