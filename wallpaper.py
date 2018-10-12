@@ -13,7 +13,12 @@ import re
 
 config_width = 1440
 config_height = 900
-config_word = '壁纸 美女 模特'
+
+config_sogou_tag = '美女'
+
+
+config_source = "sogou"
+config_baidu_word = '壁纸 性感'
 
 config_like_dir = os.path.expanduser('~') + '/wallpaper'
 ################################################################################
@@ -25,20 +30,85 @@ parser.add_option("-l", "--like", dest="like", default=False,
 
 (options, args) = parser.parse_args()
 
+header = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36',
+    'Cookie': 'AspxAutoDetectCookieSupport=1',
+}
 
-def get_so_wallpaper(i_word, i_width, i_height):
+
+def get_sogou_wallpaper(category, tag, width, height):
+    inner_img_url = ''
+    inner_file_name = ''
+
+    limit = 0
+    page_size = 15
+    repeat = 10
+    while repeat > 0:
+        repeat -= 1
+        # noinspection PyBroadException
+        try:
+            url = 'https://pic.sogou.com/pics/channel/getAllRecomPicByTag.jsp?'
+
+            if limit > 0:
+                start = random.randint(0, limit)
+            else:
+                start = 0
+
+            url += 'category=%s&' % urllib2.quote(category)
+            url += 'tag=%s&' % urllib2.quote(tag)
+            url += 'start=%s&' % start
+            url += 'len=%s&' % page_size
+            url += 'width=%s&' % width
+            url += 'height=%s&' % height
+
+            request = urllib2.Request(url, None, header)
+            response = urllib2.urlopen(request)
+            res = response.read()
+            res = res.decode('gbk').encode('utf8')
+            res = json.loads(res)
+
+            if limit == 0:
+                limit = res['maxEnd']
+                if limit == 0:
+                    break
+                continue
+
+            if 'all_items' in res:
+                items = res['all_items']
+                if len(items) > 0:
+                    r = random.randint(0, len(items) - 1)
+                    item = items[r]
+                    inner_img_url = item['pic_url']
+                    inner_file_name = bytes(item['id']) + '.jpg'
+                    break
+
+        except Exception as e:
+            pass
+
+    return inner_img_url, inner_file_name
+
+
+def get_baidu_wallpaper(i_word, i_width, i_height):
     i_img_url = ''
     i_file_name = ''
 
-    repeat = 3
+    page_size = 30
+    limit = 0
+
+    repeat = 5
+
     while repeat > 0:
+        repeat -= 1
+        # noinspection PyBroadException
         try:
             url = 'https://image.baidu.com/search/acjson?tn=resultjson_com&ipn=rj&ct=201326592&is=&fp=result&cl=&lm' \
                   '=-1&ie=utf-8&oe=utf-8&adpicid=&st=-1&z=&ic=0&s=&se=&tab=&face=0&istype=2&qc=&nc=&fr=&expermode' \
                   '=&itg=1&gsm=96'
 
-            page_size = 30
-            start = random.randint(0, 20) * page_size
+            if limit > 0:
+                start = random.randint(0, limit)
+            else:
+                start = 0
 
             url += 'queryWord=%s&' % urllib2.quote(i_word)
             url += 'word=%s&' % urllib2.quote(i_word)
@@ -49,13 +119,22 @@ def get_so_wallpaper(i_word, i_width, i_height):
 
             response = urllib2.urlopen(url)
             res = response.read()
+            res = unicode(res, errors='ignore')
             res = json.loads(res)
+
+            if limit == 0:
+                limit = res['listNum']
+                if limit == 0:
+                    break
+                continue
 
             if 'data' in res:
                 items = res['data']
                 if len(items) > 0:
                     r = random.randint(0, len(items) - 1)
                     item = items[r]
+                    if len(item) == 0:
+                        continue
 
                     # 从详情页获取大图url
                     url = 'https://image.baidu.com/search/detail?tn=baiduimagedetail&ipn=d&'
@@ -72,12 +151,18 @@ def get_so_wallpaper(i_word, i_width, i_height):
                         # 去掉特殊参数
                         i_img_url = re.sub('&quality=\d+?&', '&', i_img_url)
 
+                        try:
+                            # header 判断
+                            request = urllib2.Request(i_img_url, None, header)
+                            urllib2.urlopen(request)
+                        except urllib2.HTTPError, e:
+                            i_img_url = ''
+                            continue
+
                         i_file_name = item['os'] + '.' + item['type']
                         break
 
         except Exception as e:
-            print e
-            repeat -= 1
             pass
 
     return i_img_url, i_file_name
@@ -86,10 +171,6 @@ def get_so_wallpaper(i_word, i_width, i_height):
 def save_img(i_img_url, i_file_name, file_path):
     # noinspection PyBroadException
     try:
-        header = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36',
-            'Cookie': 'AspxAutoDetectCookieSupport=1',
-        }
         request = urllib2.Request(i_img_url, None, header)
         response = urllib2.urlopen(request)
         f = open(file_path + '/' + i_file_name, 'wb')
@@ -110,7 +191,7 @@ def save_paper_file(i_img_url, i_file_name, i_tmp_dir):
 
 
 def set_paper(picture):
-    os.popen('osascript -e \'tell application "Finder" to set desktop picture to POSIX file "' + picture + '"\'')
+    os.system('osascript -e \'tell application "Finder" to set desktop picture to POSIX file "' + picture + '"\'')
 
 
 def like_cur_paper(i_tmp_dir, i_like_dir):
@@ -130,7 +211,16 @@ if options.like:
     like_cur_paper(tmp_dir, config_like_dir)
     pass
 else:
-    img_url, file_name = get_so_wallpaper(config_word, config_width, config_height)
-    if img_url and file_name:
-        save_paper_file(img_url, file_name, tmp_dir)
-        set_paper(tmp_dir + '' + file_name)
+    img_url, file_name = '', ''
+    try:
+        if config_source == "sogou":
+            img_url, file_name = get_sogou_wallpaper("壁纸", config_sogou_tag, config_width, config_height)
+        else :
+            img_url, file_name = get_baidu_wallpaper(config_baidu_word, config_width, config_height)
+
+        if img_url and file_name:
+            save_paper_file(img_url, file_name, tmp_dir)
+            set_paper(tmp_dir + '' + file_name)
+
+    except Exception as e:
+        print 'err', e, img_url, file_name

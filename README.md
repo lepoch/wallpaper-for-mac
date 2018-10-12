@@ -1,13 +1,18 @@
 # wallpaper-for-mac
-mac，从百度获取图片并设置成壁纸
+mac，获取图片并设置成壁纸
 
 ## 配置
 ```Python
 config_width = 1440
 config_height = 900
-config_word = '壁纸 美女 模特'
 
-config_like_dir = os.path.expanduser('~') + '/wallpaper' 
+config_sogou_tag = '美女'
+
+
+config_source = "sogou"
+config_baidu_word = '壁纸 性感'
+
+config_like_dir = os.path.expanduser('~') + '/wallpaper'
 ```
 
 ## 使用
