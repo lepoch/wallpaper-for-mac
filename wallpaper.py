@@ -14,12 +14,21 @@ import re
 config_width = 1440
 config_height = 900
 
+
+# 1搜狗tag， 2搜狗搜索， 3百度搜索
+config_source = 2
+
+# 1搜狗tag
 config_sogou_tag = '美女'
 
+# 2搜狗搜索
+config_sogou_word = '诱惑'
 
-config_source = "sogou"
-config_baidu_word = '壁纸 性感'
+# 3百度搜索
+config_baidu_word = '性感'
 
+
+# 保存目录
 config_like_dir = os.path.expanduser('~') + '/wallpaper'
 ################################################################################
 
@@ -36,9 +45,12 @@ header = {
 }
 
 
-def get_sogou_wallpaper(category, tag, width, height):
+def get_sogou_wallpaper_by_tag(category, tag, width, height):
     inner_img_url = ''
     inner_file_name = ''
+
+    if isinstance(tag, list):
+        tag = tag[random.randint(0, len(tag) - 1)]
 
     limit = 0
     page_size = 15
@@ -83,6 +95,66 @@ def get_sogou_wallpaper(category, tag, width, height):
                     break
 
         except Exception as e:
+            print e
+            pass
+
+    return inner_img_url, inner_file_name
+
+
+def get_sogou_wallpaper(word, width, height):
+    inner_img_url = ''
+    inner_file_name = ''
+
+    limit = 0
+    page_size = 15
+    repeat = 10
+    while repeat > 0:
+        repeat -= 1
+        # noinspection PyBroadException
+        try:
+            url = 'https://pic.sogou.com/pics?&mode=1&dm=4&leftp=44230501&st=0&reqType=ajax&reqFrom=result&tn=0&'
+
+            if limit > 0:
+                start = random.randint(0, limit)
+            else:
+                start = 0
+
+            url += 'query=%s&' % urllib2.quote(word)
+            url += 'start=%s&' % start
+            url += 'len=%s&' % page_size
+            url += 'cwidth=%s&' % width
+            url += 'cheight=%s&' % height
+
+            request = urllib2.Request(url, None, header)
+            response = urllib2.urlopen(request)
+            res = response.read()
+            res = res.decode('gbk', errors="ignore").encode('utf8')
+            res = json.loads(res)
+
+            if limit == 0:
+                limit = res['maxEnd']
+                if limit == 0:
+                    break
+                continue
+
+            if 'items' in res:
+                items = res['items']
+                if len(items) > 0:
+                    r = random.randint(0, len(items) - 1)
+                    item = items[r]
+                    inner_img_url = item['pic_url']
+
+                    print inner_img_url
+
+                    if not img_exists(inner_img_url):
+                        inner_img_url = ''
+                        continue
+
+                    inner_file_name = bytes(item['mf_id']) + '.jpg'
+                    break
+
+        except Exception as e:
+            print e
             pass
 
     return inner_img_url, inner_file_name
@@ -151,11 +223,7 @@ def get_baidu_wallpaper(i_word, i_width, i_height):
                         # 去掉特殊参数
                         i_img_url = re.sub('&quality=\d+?&', '&', i_img_url)
 
-                        try:
-                            # header 判断
-                            request = urllib2.Request(i_img_url, None, header)
-                            urllib2.urlopen(request)
-                        except urllib2.HTTPError, e:
+                        if not img_exists(i_img_url):
                             i_img_url = ''
                             continue
 
@@ -163,9 +231,21 @@ def get_baidu_wallpaper(i_word, i_width, i_height):
                         break
 
         except Exception as e:
+            print e
             pass
 
     return i_img_url, i_file_name
+
+
+def img_exists(i_img_url):
+    try:
+        # header 判断
+        request = urllib2.Request(i_img_url, None, header)
+        urllib2.urlopen(request)
+        return True
+    except urllib2.HTTPError, e:
+        print e
+        return False
 
 
 def save_img(i_img_url, i_file_name, file_path):
@@ -213,10 +293,12 @@ if options.like:
 else:
     img_url, file_name = '', ''
     try:
-        if config_source == "sogou":
-            img_url, file_name = get_sogou_wallpaper("壁纸", config_sogou_tag, config_width, config_height)
-        else :
+        if config_source == 1:
+            img_url, file_name = get_sogou_wallpaper_by_tag("壁纸", config_sogou_tag, config_width, config_height)
+        elif config_source == 3:
             img_url, file_name = get_baidu_wallpaper(config_baidu_word, config_width, config_height)
+        else:
+            img_url, file_name = get_sogou_wallpaper(config_sogou_word, config_width, config_height)
 
         if img_url and file_name:
             save_paper_file(img_url, file_name, tmp_dir)

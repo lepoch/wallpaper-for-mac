@@ -3,15 +3,20 @@ mac，获取图片并设置成壁纸
 
 ## 配置
 ```Python
-config_width = 1440
-config_height = 900
+# 1搜狗tag， 2搜狗搜索， 3百度搜索
+config_source = 2
 
+# 1搜狗tag
 config_sogou_tag = '美女'
 
+# 2搜狗搜索
+config_sogou_word = '美女'
 
-config_source = "sogou"
-config_baidu_word = '壁纸 性感'
+# 3百度搜索
+config_baidu_word = '美女'
 
+
+# 保存目录
 config_like_dir = os.path.expanduser('~') + '/wallpaper'
 ```
 
